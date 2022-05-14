@@ -1,13 +1,24 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ProtoMC.Network.DataTypes;
-using ProtoMC.Network.IO;
 using ProtoMC.Network.Packets;
-using ProtoMC.Network.Packets.Handshaking;
 using ProtoMC.Network.Packets.Login;
 using ProtoMC.Network.Packets.Play;
 using ProtoMC.Proxy;
-using System.Net.Sockets;
+using ProtoMC.Test;
 using System.Text;
+
+//TagCompound compound = new();
+
+
+//MemoryStream ms = new();
+
+//GZipStream zlib = new(new MemoryStream(File.ReadAllBytes(@"D:\Tools\Minecraft\Server 1.18.2\world\level.dat")), CompressionMode.Decompress);
+//zlib.CopyTo(ms);
+//zlib.Dispose();
+
+//ms.Position = 0;
+//await compound.DeserializeAsync(ms);
+//return;
 
 ProtoProxy proxy = new();
 
@@ -27,12 +38,14 @@ string BuildStr(IPacket packet)
     return str.ToString();
 }
 
-List<byte[]> test = new();
+new DiamondMinerTest(proxy);
 
 proxy.ProxyError += (ex, fatal) =>
 {
+    if (!fatal && ex is IOException) return;
+
     Console.ForegroundColor = fatal ? ConsoleColor.Red : ConsoleColor.DarkMagenta;
-    Console.WriteLine($"[ERROR] {ex.Message}");
+    Console.WriteLine($"[ERROR] {ex}");
     Console.ForegroundColor = ConsoleColor.White;
 
     if (fatal)
@@ -44,6 +57,16 @@ proxy.StateChanged += (state) =>
 };
 proxy.PacketReceived += (sender, pak) =>
 {
+    switch (pak.Packet)
+    {
+        case LoginStart login:
+            login.Name = "TestAccount";
+            break;
+
+        case ChunkDataAndLight chunk:
+            break;
+    }
+
     if (pak.Packet.Header.Id == 0x66)
         pak.Drop = true;
 

@@ -53,6 +53,13 @@ namespace ProtoMC.Network.IO
 
         public static async Task<object> TypeToStructureAsync(Type type, Stream stream)
         {
+            if(type == typeof(bool))
+            {
+                byte[] b = new byte[1];
+                await stream.ReadAsync(b);
+
+                return b[0] == 0x01;
+            }
             int sz = Marshal.SizeOf(type);
 
             byte[] data = new byte[sz];

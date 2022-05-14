@@ -1,5 +1,6 @@
 ﻿using ProtoMC.Network.DataTypes;
 using ProtoMC.Network.IO;
+using ProtoMC.Utils;
 using System.Reflection;
 
 namespace ProtoMC.Network.Packets
@@ -15,21 +16,7 @@ namespace ProtoMC.Network.Packets
             Data = data;
         }
 
-        public static IPacket InstantiatePacket(Type type)
-        {
-            ConstructorInfo ctor = type.GetConstructors()[0];
-            ParameterInfo[] ctorParams = ctor.GetParameters();
-
-            object?[] paramsInfo = new object?[ctorParams.Length];
-            for (int i = 0; i < ctorParams.Length; i++)
-            {
-                ParameterInfo param = ctorParams[i];
-                if (param.ParameterType.IsValueType)
-                    paramsInfo[i] = Activator.CreateInstance(param.ParameterType);
-            }
-
-            return (IPacket)Activator.CreateInstance(type, paramsInfo)!;
-        }
+        public static IPacket InstantiatePacket(Type type) => (IPacket)type.Instantiate();
         public async Task<IPacket> ConvertPacketAsync(State state, Bound bound)
         {
             Header = new(Header.Id, state, bound);

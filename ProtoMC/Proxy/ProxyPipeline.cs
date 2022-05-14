@@ -57,7 +57,7 @@ namespace ProtoMC.Proxy
                     if (!args.Drop)
                     {
                         LocalClient!.ConfirmPacket(args.Packet);
-                        await RemoteClient!.WritePacketAsync(args.Packet);
+                        await InjectPacketIntoServer(args.Packet);
                     }
 
                     ReceiveServerBoundPacket();
@@ -83,7 +83,7 @@ namespace ProtoMC.Proxy
                     if (!args.Drop)
                     {
                         RemoteClient!.ConfirmPacket(args.Packet);
-                        await LocalClient!.WritePacketAsync(args.Packet);
+                        await InjectPacketIntoClient(args.Packet);
                     }
 
                     ReceiveClientBoundPacket();
@@ -94,6 +94,12 @@ namespace ProtoMC.Proxy
                 }
             });
         }
+
+        public async Task InjectPacketIntoClient(IPacket packet) 
+            => await LocalClient!.WritePacketAsync(packet);
+        public async Task InjectPacketIntoServer(IPacket packet)
+            => await RemoteClient!.WritePacketAsync(packet);
+
 
         public void Dispose()
         {

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using ProtoMC.Network.Packets;
+using System.Net;
 using System.Net.Sockets;
 
 namespace ProtoMC.Proxy
@@ -53,6 +54,11 @@ namespace ProtoMC.Proxy
         {
             ProxyError?.Invoke(ex, false);
         }
+
+        public async Task InjectPacketIntoClient(IPacket packet)
+            => await Pipeline.InjectPacketIntoClient(packet);
+        public async Task InjectPacketIntoServer(IPacket packet)
+            => await Pipeline.InjectPacketIntoServer(packet);
 
         public void StartProxy(int bindPort, string remoteHost, int remotePort)
         {

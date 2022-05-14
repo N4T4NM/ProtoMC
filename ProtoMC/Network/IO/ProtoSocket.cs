@@ -45,7 +45,7 @@ namespace ProtoMC.Network.IO
 
         protected virtual void CheckStatusPacket(IPacket packet)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         protected virtual void CheckLoginPacket(IPacket packet)
